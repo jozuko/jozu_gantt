@@ -9,9 +9,8 @@ class JozuGanttProjectSettings < ActiveRecord::Base
     unless jozu_gantt_settings.present?
       if project_id != ALL_PROJECT
         jozu_gantt_settings = JozuGanttProjectSettings.where(['project_id = ?', ALL_PROJECT]).first()
-      elsif
-        jozu_gantt_settings = JozuGanttProjectSettings.new
       end
+      jozu_gantt_settings = JozuGanttProjectSettings.new unless jozu_gantt_settings.present?
 
       jozu_gantt_settings.project_id    = project_id
       jozu_gantt_settings.show_assign   = 1

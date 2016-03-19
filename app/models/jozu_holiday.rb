@@ -14,7 +14,7 @@ class JozuHoliday < ActiveRecord::Base
 
   validates_inclusion_of :kind,        presence: true, :in=> ['fixed', 'happy', 'corporate']
   validates              :month,       presence: true, numericality: {only_integer: true, greater_than_or_equal_to: 1, less_than_or_equal_to: 12}
-  validates              :day_or_week, presence: true, numericality: {only_integer: true, greater_than_or_equal_to: 1, less_than_or_equal_to: 12}
+  validates              :day_or_week, presence: true, numericality: {only_integer: true, greater_than_or_equal_to: 1, less_than_or_equal_to: 31}
   validates              :year_from,   presence: true, numericality: {only_integer: true, greater_than_or_equal_to: 1945, less_than_or_equal_to: 9999}
   validates              :year_to,     presence: true, numericality: {only_integer: true, greater_than_or_equal_to: 1945, less_than_or_equal_to: 9999}
 
