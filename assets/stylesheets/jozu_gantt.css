@@ -1,0 +1,4 @@
+.version-behind-schedule, .issue-behind-schedule {color: #f66914;}
+.version-overdue, .issue-overdue, .project-overdue {color: #f00;}
+.issue-on-schedule {color: #000}
+.issue-closed { color: #999; text-decoration: line-through; }

@@ -1,0 +1,11 @@
+<h3><%= l(:label_gantt_addon_setting) %></h3>
+
+<%= form_tag({
+              :controller => 'jozu_gantt',
+              :action => 'associate',
+              :project_id => @project,
+              :id => 'jozu_settings'
+             }, :method => :get) do %>
+
+<p><%= submit_tag l(:button_relation_assign), :class => 'button-small', :name => nil, data: { confirm: l(:confirm_relation_assign) } %></p>
+<% end %>

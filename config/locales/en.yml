@@ -1,0 +1,25 @@
+# English strings go here for Rails i18n
+en:
+  label_gantt_addon_setting: Gantt addon setting
+  label_show_assign: "Show assignees"
+  jozu_gantt_show_colums: "Show columns"
+  label_column_width: "Column width"
+  label_subject: "Subject"
+  noteice_successful_update: "setting update successful."
+  button_relation_assign: "Associate a issues by assignee"
+  confirm_relation_assign: "When you do this, the association resets all you have added so far.\nDo you really want?"
+  legend_gantt_settings: Gantt settings
+  legend_holiday_settings: "Holiday settings"
+  legend_non_working_settings: "Non-working days settings"
+  description_holiday_settings: "so sorry. This setting is japanese only."
+  description_non_working_settings: Apart from the setting of the "Administration" > "Settings" > "Issue tracking" > "Non-working days", you can set up your own holiday.
+
+  confirm_delete: "Are you sure to delte?"
+  label_holiday_kind: "Type"
+  label_holiday_month: "Month"
+  label_holiday_day_or_week: "Day or Weeks"
+  label_holiday_year_from: "Year from"
+  label_holiday_year_to: "Year to"
+  label_holiday_description: "Description"
+  label_holiday_kind_fixed: "fixed"
+  label_holiday_kind_happy: "happy-monday"

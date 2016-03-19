@@ -1,0 +1,177 @@
+<% include_calendar_headers_tags %>
+
+<ul>
+  <%= call_hook(:view_issues_context_menu_start, {:issues => @issues, :can => @can, :back => @back }) %>
+
+  <% if @issue -%>
+    <li><%= context_menu_link l(:button_edit), edit_issue_path(@issue),
+            :class => 'icon-edit', :disabled => !@can[:edit] %></li>
+  <% else %>
+    <li><%= context_menu_link l(:button_edit), bulk_edit_issues_path(:ids => @issue_ids),
+            :class => 'icon-edit', :disabled => !@can[:edit] %></li>
+  <% end %>
+
+  <% if @allowed_statuses.present? %>
+  <li class="folder">
+    <a href="#" class="submenu"><%= l(:field_status) %></a>
+    <ul>
+    <% @allowed_statuses.each do |s| -%>
+        <li><%= context_menu_link s.name, bulk_update_issues_path(:ids => @issue_ids, :issue => {:status_id => s}, :back_url => @back), :method => :post,
+                                  :selected => (@issue && s == @issue.status), :disabled => !@can[:edit] %></li>
+    <% end -%>
+    </ul>
+  </li>
+  <% end %>
+
+  <% if @trackers.present? %>
+  <li class="folder">
+    <a href="#" class="submenu"><%= l(:field_tracker) %></a>
+    <ul>
+    <% @trackers.each do |t| -%>
+        <li><%= context_menu_link t.name, bulk_update_issues_path(:ids => @issue_ids, :issue => {'tracker_id' => t}, :back_url => @back), :method => :post,
+                                  :selected => (@issue && t == @issue.tracker), :disabled => !@can[:edit] %></li>
+    <% end -%>
+    </ul>
+  </li>
+  <% end %>
+
+  <% if @safe_attributes.include?('priority_id') && @priorities.present? -%>
+  <li class="folder">
+    <a href="#" class="submenu"><%= l(:field_priority) %></a>
+    <ul>
+    <% @priorities.each do |p| -%>
+        <li><%= context_menu_link p.name, bulk_update_issues_path(:ids => @issue_ids, :issue => {'priority_id' => p}, :back_url => @back), :method => :post,
+                                  :selected => (@issue && p == @issue.priority), :disabled => (!@can[:edit] || @issues.detect {|i| !i.leaf?}) %></li>
+    <% end -%>
+    </ul>
+  </li>
+  <% end %>
+
+  <% if @safe_attributes.include?('fixed_version_id') && @versions.present? -%>
+  <li class="folder">
+    <a href="#" class="submenu"><%= l(:field_fixed_version) %></a>
+    <ul>
+    <% @versions.sort.each do |v| -%>
+        <li><%= context_menu_link format_version_name(v), bulk_update_issues_path(:ids => @issue_ids, :issue => {'fixed_version_id' => v}, :back_url => @back), :method => :post,
+                                  :selected => (@issue && v == @issue.fixed_version), :disabled => !@can[:edit] %></li>
+    <% end -%>
+        <li><%= context_menu_link l(:label_none), bulk_update_issues_path(:ids => @issue_ids, :issue => {'fixed_version_id' => 'none'}, :back_url => @back), :method => :post,
+                                  :selected => (@issue && @issue.fixed_version.nil?), :disabled => !@can[:edit] %></li>
+    </ul>
+  </li>
+  <% end %>
+
+  <% if @safe_attributes.include?('assigned_to_id') && @assignables.present? -%>
+  <li class="folder">
+    <a href="#" class="submenu"><%= l(:field_assigned_to) %></a>
+    <ul>
+    <% if @assignables.include?(User.current) %>
+        <li><%= context_menu_link "<< #{l(:label_me)} >>", bulk_update_issues_path(:ids => @issue_ids, :issue => {'assigned_to_id' => User.current}, :back_url => @back), :method => :post,
+                                  :disabled => !@can[:edit] %></li>
+    <% end %>
+    <% @assignables.each do |u| -%>
+        <li><%= context_menu_link u.name, bulk_update_issues_path(:ids => @issue_ids, :issue => {'assigned_to_id' => u}, :back_url => @back), :method => :post,
+                                  :selected => (@issue && u == @issue.assigned_to), :disabled => !@can[:edit] %></li>
+    <% end -%>
+        <li><%= context_menu_link l(:label_nobody), bulk_update_issues_path(:ids => @issue_ids, :issue => {'assigned_to_id' => 'none'}, :back_url => @back), :method => :post,
+                                  :selected => (@issue && @issue.assigned_to.nil?), :disabled => !@can[:edit] %></li>
+    </ul>
+  </li>
+  <% end %>
+
+  <% if @safe_attributes.include?('category_id') && @project && @project.issue_categories.any? -%>
+  <li class="folder">
+    <a href="#" class="submenu"><%= l(:field_category) %></a>
+    <ul>
+    <% @project.issue_categories.each do |u| -%>
+        <li><%= context_menu_link u.name, bulk_update_issues_path(:ids => @issue_ids, :issue => {'category_id' => u}, :back_url => @back), :method => :post,
+                                  :selected => (@issue && u == @issue.category), :disabled => !@can[:edit] %></li>
+    <% end -%>
+        <li><%= context_menu_link l(:label_none), bulk_update_issues_path(:ids => @issue_ids, :issue => {'category_id' => 'none'}, :back_url => @back), :method => :post,
+                                  :selected => (@issue && @issue.category.nil?), :disabled => !@can[:edit] %></li>
+    </ul>
+  </li>
+  <% end -%>
+
+  <% if @safe_attributes.include?('done_ratio') && Issue.use_field_for_done_ratio? %>
+  <li class="folder">
+    <a href="#" class="submenu"><%= l(:field_done_ratio) %></a>
+    <ul>
+    <% (0..10).map{|x|x*10}.each do |p| -%>
+        <li><%= context_menu_link "#{p}%", bulk_update_issues_path(:ids => @issue_ids, :issue => {'done_ratio' => p}, :back_url => @back), :method => :post,
+                                      :selected => (@issue && p == @issue.done_ratio), :disabled => (!@can[:edit] || @issues.detect {|i| !i.leaf?}) %></li>
+    <% end -%>
+    </ul>
+  </li>
+  <% end %>
+
+<% if @can[:edit] %>
+  <li class="folder">
+    <a href="#" class="submenu"><%= l(:field_start_date) %>:<%= @issue.start_date %></a>
+    <ul>
+      <li>
+        <%= context_menu_link "start_date", bulk_update_issues_path(:ids => @issue_ids, :issue => {'start_date' => 'START_DATE'}, :back_url => @back), :method => :post, :disabled => (!@can[:edit] || @issues.detect {|i| !i.leaf?}), :id => 'start_date_link', :style => 'display:none;' %>
+        <%= hidden_field_tag 'start_date', '' %><%= calendar_for('start_date') %>
+      </li>
+    </ul>
+  </li>
+  <%= javascript_tag do %>
+    var start_date_url = document.getElementById('start_date_link').href;
+
+    var onSelectStartDateFunc = function(dateText, inst) {
+      var url = start_date_url.replace('START_DATE', dateText);
+      document.getElementById('start_date_link').href = url;
+      document.getElementById('start_date_link').click();
+    }
+
+    $(function() {
+      $("#start_date").datepicker('option', 'onSelect', onSelectStartDateFunc);
+    });
+  <% end %>
+<% else %>
+  <li><%= l(:field_start_date) %>:<%= @issue.start_date %></li>
+<% end %>
+
+<% if @can[:edit] %>
+  <li class="folder">
+    <a href="#" class="submenu"><%= l(:field_due_date) %>:<%= @issue.due_date %></a>
+    <ul>
+      <li>
+        <%= context_menu_link "due_date", bulk_update_issues_path(:ids => @issue_ids, :issue => {'due_date' => 'DUE_DATE'}, :back_url => @back), :method => :post, :disabled => (!@can[:edit] || @issues.detect {|i| !i.leaf?}), :id => 'due_date_link', :style => 'display:none;' %>
+        <%= hidden_field_tag 'due_date', '' %><%= calendar_for('due_date') %>
+      </li>
+    </ul>
+  </li>
+  <%= javascript_tag do %>
+    var due_date_url = document.getElementById('due_date_link').href;
+
+    var onSelectDueDateFunc = function(dateText, inst) {
+      var url = due_date_url.replace('DUE_DATE', dateText);
+      document.getElementById('due_date_link').href = url;
+      document.getElementById('due_date_link').click();
+    }
+
+    $(function() {
+      $("#due_date").datepicker('option', 'onSelect', onSelectDueDateFunc);
+    });
+  <% end %>
+<% else %>
+  <li><%= l(:field_start_date) %>:<%= @issue.start_date %></li>
+<% end %>
+
+  <% @options_by_custom_field.each do |field, options| %>
+    <li class="folder cf_<%= field.id %>">
+      <a href="#" class="submenu"><%= field.name %></a>
+      <ul>
+      <% options.each do |text, value| %>
+        <li><%= bulk_update_custom_field_context_menu_link(field, text, value || text) %></li>
+      <% end %>
+      <% unless field.is_required? %>
+        <li><%= bulk_update_custom_field_context_menu_link(field, l(:label_none), '__none__') %></li>
+      <% end %>
+      </ul>
+    </li>
+  <% end %>
+
+  <%= call_hook(:view_issues_context_menu_end, {:issues => @issues, :can => @can, :back => @back }) %>
+</ul>

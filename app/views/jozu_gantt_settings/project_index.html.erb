@@ -1,0 +1,27 @@
+<h2><%= l(:label_gantt_addon_setting) %></h2>
+
+
+<%= labelled_form_for :settings, @jozu_gantt_project_settings,
+                             :url => {:controller => 'jozu_gantt_settings',
+                             :action => 'project_edit',
+                             :project_id => @project,
+                             :tab => 'jozu_gantt',
+                             :setting_id => @jozu_gantt_project_settings.id}, 
+                             :html => {:id => 'jozu_gantt' } do |f| %>
+<p>
+  <%= f.check_box :show_assign, :label => l(:label_show_assign) %>
+</p>
+
+<p>
+  <%= content_tag(:label, l(:label_column_width))%>:<%= content_tag(:label, l(:label_subject))%>
+  <%= text_field_tag 'settings[subject_width]', @jozu_gantt_project_settings[:subject_width] %>
+</p>
+
+<p>
+  <%= content_tag(:label, l(:label_column_width))%>:<%= content_tag(:label, l(:field_assigned_to))%>
+  <%= text_field_tag 'settings[assign_width]', @jozu_gantt_project_settings[:assign_width] %>
+</p>
+
+<%= submit_tag l(:button_save) %>
+<% end %>
+

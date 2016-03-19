@@ -1,0 +1,26 @@
+# Japanese strings go here for Rails i18n
+ja:
+  label_gantt_addon_setting: ガントチャート追加設定
+  label_show_assign: "担当者を表示"
+  jozu_gantt_show_colums: "表示列"
+  label_column_width: "列のサイズ"
+  label_subject: "項目"
+  noteice_successful_update: "設定が更新されました。"
+  button_relation_assign: "担当者でチケットを関連付け"
+  confirm_relation_assign: "この操作を行うと、これまでに追加した関連付けがすべてリセットされます。\nよろしいですか？"
+  legend_gantt_settings: "ガントチャートの設定"
+  legend_holiday_settings: "祝祭日の設定"
+  legend_non_working_settings: "休業日の設定"
+  description_holiday_settings: "「春分の日」(3/20 or 3/21)と「秋分の日」(9/22 or 9/23)は毎年変わります。祝日ではなく、休業日で設定してください。"
+  description_non_working_settings: "「管理」>「設定」>「チケットトラッキング」>「休業日」の設定とは別に、独自の休業日を設定できます。"
+
+  confirm_delete: "本当に削除しますか？"
+  label_holiday_kind: "タイプ"
+  label_holiday_month: "月"
+  label_holiday_day_or_week: "日or週"
+  label_holiday_year_from: "開始年"
+  label_holiday_year_to: "終了年"
+  label_holiday_description: "説明"
+  label_holiday_delete: "削除"
+  label_holiday_kind_fixed: "固定"
+  label_holiday_kind_happy: "ハッピーマンデー"
