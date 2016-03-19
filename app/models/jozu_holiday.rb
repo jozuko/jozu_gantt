@@ -18,6 +18,14 @@ class JozuHoliday < ActiveRecord::Base
   validates              :year_from,   presence: true, numericality: {only_integer: true, greater_than_or_equal_to: 1945, less_than_or_equal_to: 9999}
   validates              :year_to,     presence: true, numericality: {only_integer: true, greater_than_or_equal_to: 1945, less_than_or_equal_to: 9999}
 
+  after_save :clear_cache
+  after_destroy :clear_cache
+
+  @@holidays = nil
+  @@fixed_holidays = nil
+  @@happy_holidays = nil
+  @@corporate_holidays = nil
+
   def self.insert_init_data
     init_holidays =[['fixed',   1,  1, 1949, 9999, '元日'],
                     ['fixed',   1, 15, 1949, 1999, '成人の日'],
@@ -46,40 +54,58 @@ class JozuHoliday < ActiveRecord::Base
                     ['fixed',   6,  9, 1993, 1993, '皇太子徳仁親王の結婚の儀']]
 
     init_holidays.each do |init_holiday|
-      @jozu_holiday             = JozuHoliday.new
-      @jozu_holiday.kind        = init_holiday[0]
-      @jozu_holiday.month       = init_holiday[1]
-      @jozu_holiday.day_or_week = init_holiday[2]
-      @jozu_holiday.year_from   = init_holiday[3]
-      @jozu_holiday.year_to     = init_holiday[4]
-      @jozu_holiday.description = init_holiday[5]
-      @jozu_holiday.save!
+      jozu_holiday             = JozuHoliday.new
+      jozu_holiday.kind        = init_holiday[0]
+      jozu_holiday.month       = init_holiday[1]
+      jozu_holiday.day_or_week = init_holiday[2]
+      jozu_holiday.year_from   = init_holiday[3]
+      jozu_holiday.year_to     = init_holiday[4]
+      jozu_holiday.description = init_holiday[5]
+      jozu_holiday.save!
     end
+  end
+
+  def clear_cache
+    @@holidays = nil
+    @@fixed_holidays = nil
+    @@happy_holidays = nil
+    @@corporate_holidays = nil
   end
 
   def self.find_by_holiday
-    jozu_holidays = JozuHoliday.where(['kind <> ?', 'corporate'])
-    unless jozu_holidays.present?
-      insert_init_data
-      jozu_holidays = JozuHoliday.where(['kind <> ?', 'corporate'])
+    unless @@holidays.present?
+      @@holidays = JozuHoliday.where(['kind <> ?', 'corporate'])
+      unless @@holidays.present?
+        insert_init_data
+        @@holidays = JozuHoliday.where(['kind <> ?', 'corporate'])
+      end
     end
 
-    return jozu_holidays
+    return @@holidays
   end
 
   def self.find_by_fixed
-    jozu_holidays = JozuHoliday.where(['kind = ?', 'fixed'])
-    return jozu_holidays
+    unless @@fixed_holidays.present?
+      @@fixed_holidays = JozuHoliday.where(['kind = ?', 'fixed'])
+    end
+
+    return @@fixed_holidays
   end
 
   def self.find_by_happy
-    jozu_holidays = JozuHoliday.where(['kind = ?', 'happy'])
-    return jozu_holidays
+    unless @@happy_holidays.present?
+      @@happy_holidays = JozuHoliday.where(['kind = ?', 'happy'])
+    end
+
+    return @@happy_holidays
   end
 
   def self.find_by_corporate
-    jozu_non_working_days = JozuHoliday.where(['kind = ?', 'corporate'])
-    return jozu_non_working_days
+    unless @@corporate_holidays.present?
+      @@corporate_holidays = JozuHoliday.where(['kind = ?', 'corporate'])
+    end
+
+    return @@corporate_holidays
   end
 
   def logger

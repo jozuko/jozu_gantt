@@ -24,15 +24,14 @@ class JozuGanttSettingsController < ApplicationController
       end
 
       # insert or update
+      jozu_holiday.kind = jozu_gantt_setting_param[:kind]
+      jozu_holiday.month = jozu_gantt_setting_param[:month]
+      jozu_holiday.day_or_week = jozu_gantt_setting_param[:day_or_week]
+      jozu_holiday.year_from = jozu_gantt_setting_param[:year_from]
+      jozu_holiday.year_to = jozu_gantt_setting_param[:year_to]
+      jozu_holiday.description = jozu_gantt_setting_param[:description]
 
-        jozu_holiday.kind = jozu_gantt_setting_param[:kind]
-        jozu_holiday.month = jozu_gantt_setting_param[:month]
-        jozu_holiday.day_or_week = jozu_gantt_setting_param[:day_or_week]
-        jozu_holiday.year_from = jozu_gantt_setting_param[:year_from]
-        jozu_holiday.year_to = jozu_gantt_setting_param[:year_to]
-        jozu_holiday.description = jozu_gantt_setting_param[:description]
-
-        jozu_holiday.save
+      jozu_holiday.save
     end
 
     flash[:notice] = l(:noteice_successful_update)

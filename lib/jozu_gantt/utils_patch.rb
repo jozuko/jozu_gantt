@@ -25,9 +25,6 @@
 module JozuGantt::UtilsPatch
   def self.included(base) # :nodoc:
     base.class_eval do
-      @fixed_holidays = nil
-      @happy_holidays = nil
-      @corporate_holidays = nil
 
       # working_days -> jozu_holi_working_days
       def working_days_with_jozu_holi_working_days(from, to)
@@ -46,10 +43,23 @@ module JozuGantt::UtilsPatch
         holi_next_working_date(date)
       end
 
+      # non_working_week_days -> jozu_holi_non_working_week_days
+      def non_working_week_days_with_jozu_holi_non_working_week_days
+        @non_working_week_days = begin
+          days = Setting.find_non_working_week_days
+          if days.is_a?(Array) && days.size < 7
+            days.map(&:to_i)
+          else
+            []
+          end
+        end
+      end
+
       # alias_method_chain
-      alias_method_chain :working_days,      :jozu_holi_working_days
-      alias_method_chain :add_working_days,  :jozu_holi_add_working_days
-      alias_method_chain :next_working_date, :jozu_holi_next_working_date
+      alias_method_chain :working_days,          :jozu_holi_working_days
+      alias_method_chain :add_working_days,      :jozu_holi_add_working_days
+      alias_method_chain :next_working_date,     :jozu_holi_next_working_date
+      alias_method_chain :non_working_week_days, :jozu_holi_non_working_week_days
 
       # holi_working_days
       def holi_working_days(from, to)
@@ -154,7 +164,7 @@ module JozuGantt::UtilsPatch
 
       # 固定休日をチェック
       def checkFixedHoliday(date)
-        @fixed_holidays = JozuHoliday.find_by_fixed() if @fixed_holidays.nil?
+        @fixed_holidays = JozuHoliday.find_by_fixed()
         unless @fixed_holidays.present?
           return false
         end
@@ -188,7 +198,7 @@ module JozuGantt::UtilsPatch
 
       # ハッピーマンデーをチェック
       def checkHappyHoliday(date)
-        @happy_holidays = JozuHoliday.find_by_happy() if @happy_holidays.nil?
+        @happy_holidays = JozuHoliday.find_by_happy()
         unless @happy_holidays.present?
           return false
         end
@@ -220,7 +230,7 @@ module JozuGantt::UtilsPatch
 
       # 会社休日をチェック
       def checkCorporateHoliday(date)
-        @corporate_holidays = JozuHoliday.find_by_corporate() if @corporate_holidays.nil?
+        @corporate_holidays = JozuHoliday.find_by_corporate()
         unless @corporate_holidays.present?
           return false
         end
