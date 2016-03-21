@@ -9,3 +9,13 @@
 
 <p><%= submit_tag l(:button_relation_assign), :class => 'button-small', :name => nil, data: { confirm: l(:confirm_relation_assign) } %></p>
 <% end %>
+
+<%= form_tag({
+              :controller => 'jozu_gantt',
+              :action => 'delete_relation',
+              :project_id => @project,
+              :id => 'jozu_settings'
+             }, :method => :get) do %>
+
+<p><%= submit_tag l(:button_delete_all_relation), :class => 'button-small', :name => nil, data: { confirm: l(:confirm_relation_assign) } %></p>
+<% end %>

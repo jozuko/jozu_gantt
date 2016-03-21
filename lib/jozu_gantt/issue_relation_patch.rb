@@ -1,4 +1,4 @@
-# Jozu Gantt Plugin - lib/redmine/utils.rbの拡張
+# Jozu Gantt Plugin - app/models/issue_relation.rbの拡張
 #
 # The MIT License (MIT)
 #
@@ -28,8 +28,6 @@ module JozuGantt::IssueRelationPatch
 
   def self.included(base) # :nodoc:
     base.class_eval do
-
-
 
       # successor_soonest_start -> jozu_successor_soonest_start
       def successor_soonest_start_with_jozu_successor_soonest_start

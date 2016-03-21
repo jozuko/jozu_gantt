@@ -28,8 +28,6 @@ module JozuGantt::UtilsPatch
 
       # working_days -> jozu_holi_working_days
       def working_days_with_jozu_holi_working_days(from, to)
-        logger.info from.to_s + " - " + to.to_s
-
         holi_working_days(from, to)
       end
 
@@ -109,22 +107,22 @@ module JozuGantt::UtilsPatch
             next
           end
 
-          while non_working_week_days.include?(((cwday + days - 1) % 7) + 1)
+          if non_working_week_days.include?(((cwday + days - 1) % 7) + 1)
             days += 1
             next
           end
 
-          while checkFixedHoliday((date + days))
+          if checkFixedHoliday((date + days))
             days += 1
             next
           end
 
-          while checkHappyHoliday((date + days))
+          if checkHappyHoliday((date + days))
             days += 1
             next
           end
 
-          while checkCorporateHoliday((date + days))
+          if checkCorporateHoliday((date + days))
             days += 1
             next
           end
@@ -146,22 +144,22 @@ module JozuGantt::UtilsPatch
             next
           end
 
-          while non_working_week_days.include?(((cwday + days - 1) % 7) + 1)
+          if non_working_week_days.include?(((cwday + days - 1) % 7) + 1)
             days -= 1
             next
           end
 
-          while checkFixedHoliday((date + days))
+          if checkFixedHoliday((date + days))
             days -= 1
             next
           end
 
-          while checkHappyHoliday((date + days))
+          if checkHappyHoliday((date + days))
             days -= 1
             next
           end
 
-          while checkCorporateHoliday((date + days))
+          if checkCorporateHoliday((date + days))
             days -= 1
             next
           end

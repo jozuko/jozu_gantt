@@ -7,6 +7,7 @@ ja:
   label_subject: "項目"
   noteice_successful_update: "設定が更新されました。"
   button_relation_assign: "担当者でチケットを関連付け"
+  button_delete_all_relation: "すべての関連付けを削除"
   confirm_relation_assign: "この操作を行うと、これまでに追加した関連付けがすべてリセットされます。\nよろしいですか？"
   legend_gantt_settings: "ガントチャートの設定"
   legend_holiday_settings: "祝祭日の設定"

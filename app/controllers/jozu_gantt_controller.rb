@@ -1,5 +1,28 @@
 # encoding: utf-8
-
+#
+# Jozu Gantt Plugin - JozuGanttController
+#
+# The MIT License (MIT)
+#
+# Copyright (c) [2016] [jozuko]
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
 class JozuGanttController < ApplicationController
   unloadable
 
@@ -15,17 +38,14 @@ class JozuGanttController < ApplicationController
   def associate
 
     # 関連付けを削除
-    @beforeIssueRelationIds = IssueRelation.find_by_sql(["select issue_relations.id from issue_relations inner join issues on issues.project_id=:project_id and (issue_relations.issue_from_id=issues.id or issue_relations.issue_to_id=issues.id)", {:project_id => @project.id}]);
-    IssueRelation.delete_all(id: @beforeIssueRelationIds)
+    beforeIssueRelationIds = relation_ids
+    IssueRelation.delete_all(id: beforeIssueRelationIds)
 
-    # メンバーごとに処理する
+    # 担当者ごとに関連付けを設定
     @project.members.each do |member|
-
-      # ユーザが担当者のチケットを取得
-      @issues = Issue.find_by_sql(["select id, start_date, due_date from issues where assigned_to_id=:assigned_to_id and project_id=:project_id order by start_date, due_date, id", {:assigned_to_id => member.user_id, :project_id => @project.id}])
-      if @issues.present?
-
-        @issues.each_with_index do |issue, index|
+      issues = Issue.find_by_sql(["select id, start_date, due_date from issues where assigned_to_id=:assigned_to_id and project_id=:project_id order by start_date, due_date, id", {:assigned_to_id => member.user_id, :project_id => @project.id}])
+      if issues.present?
+        issues.each_with_index do |issue, index|
           if index == 0
             next
           end
@@ -33,17 +53,15 @@ class JozuGanttController < ApplicationController
           begin
             delay = 0
 
-            logger.info @issues[index-1].id.to_s + ", " + @issues[index].id.to_s
-            if @issues[index].start_date > @issues[index-1].due_date
-              delay = working_days(@issues[index-1].due_date, @issues[index].start_date) - 2
+            if issues[index].start_date > issues[index-1].due_date
+              delay = working_days(issues[index-1].due_date, issues[index].start_date) - 2
             else
-              delay = working_days(@issues[index].start_date, @issues[index-1].due_date) * -1
+              delay = working_days(issues[index].start_date, issues[index-1].due_date) * -1
             end
-            logger.info "delay:" + delay.to_s
 
             relation = IssueRelation.new
-            relation.issue_from_id = @issues[index-1].id
-            relation.issue_to_id   = @issues[index].id
+            relation.issue_from_id = issues[index-1].id
+            relation.issue_to_id   = issues[index].id
             relation.delay         = delay
             relation.relation_type = "precedes"
             relation.save!
@@ -57,6 +75,24 @@ class JozuGanttController < ApplicationController
     redirect_to :controller => 'gantts',
                 :action => 'show',
                 :project_id => @project
+  end
+
+  # 関連付けすべて削除
+  def delete_relation
+
+    # 関連付けを削除
+    beforeIssueRelationIds = relation_ids
+    IssueRelation.delete_all(id: beforeIssueRelationIds)
+
+    # ガントチャート画面にリダイレクト
+    redirect_to :controller => 'gantts',
+                :action => 'show',
+                :project_id => @project
+  end
+
+  # プロジェクトに設定されているすべての関連付けを取得
+  def relation_ids
+    return IssueRelation.find_by_sql(["select issue_relations.id from issue_relations inner join issues on issues.project_id=:project_id and (issue_relations.issue_from_id=issues.id or issue_relations.issue_to_id=issues.id)", {:project_id => @project.id}]);
   end
 
   # context_menu
