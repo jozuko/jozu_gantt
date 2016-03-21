@@ -290,7 +290,7 @@
 
 <% ###### Get holidays ###### %>
 <%
-  @jozu_holidays = @gantt.getHolidays(@gantt.date_from, @gantt.date_to)
+  jozu_holidays = @gantt.getHolidays(@gantt.date_from, @gantt.date_to)
 %>
 <% ###### Day numbers headers ###### %>
 <% if show_day_num %>
@@ -310,7 +310,7 @@
       style += "height:#{height}px;"
       style += "font-size:0.7em;"
       clss = "gantt_hdr"
-      clss << " nwday" if @gantt.non_working_week_days.include?(wday) || @jozu_holidays.include?(@gantt.date_from + day_index)
+      clss << " nwday" if jozu_holidays.include?(@gantt.date_from + day_index)
     %>
     <%= content_tag(:div, :style => style, :class => clss) do %>
       <%= day_num.day %>
@@ -342,7 +342,7 @@
       style += "height: #{height}px;"
       style += "font-size:0.7em;"
       clss = "gantt_hdr"
-      clss << " nwday" if @gantt.non_working_week_days.include?(wday) || @jozu_holidays.include?(@gantt.date_from + day_index)
+      clss << " nwday" if jozu_holidays.include?(@gantt.date_from + day_index)
     %>
     <%= content_tag(:div, :style => style, :class => clss) do %>
       <%= day_letter(wday) %>

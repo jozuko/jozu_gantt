@@ -40,6 +40,7 @@ function add_holiday(kind_option_labels, kind_option_values) {
 
 	holiday_kind_cell.innerHTML = '<input type="hidden" value="" name="holidays[' + array_index + '][id]" id="holidays_' + array_index + '_id" />'
 	                            + '<input type="hidden" value="false" name="holidays[' + array_index + '][_destroy]" id="holidays_' + array_index + '__destroy" />'
+	                            + '<input type="hidden" value="1" name="holidays[' + array_index + '][non_working]" id="holidays_' + array_index + '_non_working" />'
 	                            + '<select name="holidays[' + array_index + '][kind]" id="holidays_' + array_index + '_kind">' + kind_options + '</select>';
 
     holiday_month_cell.innerHTML = '<select name="holidays[' + array_index + '][month]" id="holidays_' + array_index + '_month">'
@@ -59,9 +60,9 @@ function add_holiday(kind_option_labels, kind_option_values) {
     holiday_delete.innerHTML = '<a href="#" onclick="delete_holiday(this, &quot;holidays_' + array_index + '__destroy&quot;, &quot;本当に削除しますか？&quot;); return false;" class="icon icon-del">削除</a>';
 }
 
-function add_corporate_holiday() {
+function add_corporate_holiday(table_id, non_working) {
 
-	var holidays = document.getElementById('settings_corporate_holidays');
+	var holidays = document.getElementById(table_id);
 	var holiday_row = holidays.insertRow(-1);
 
 	var holiday_month_cell       = holiday_row.insertCell(-1);
@@ -77,6 +78,7 @@ function add_corporate_holiday() {
 	holiday_month_cell.innerHTML = '<input type="hidden" value="" name="holidays[' + array_index + '][id]" id="holidays_' + array_index + '_id" />'
 	                             + '<input type="hidden" value="false" name="holidays[' + array_index + '][_destroy]" id="holidays_' + array_index + '__destroy" />'
 	                             + '<input type="hidden" value="corporate" name="holidays[' + array_index + '][kind]" id="holidays_' + array_index + '_kind" />'
+	                             + '<input type="hidden" value="' + non_working + '" name="holidays[' + array_index + '][non_working]" id="holidays_' + array_index + '_non_working" />'
                                  + '<select name="holidays[' + array_index + '][month]" id="holidays_' + array_index + '_month">'
                                  + '<option selected="selected" value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option><option value="11">11</option><option value="12">12</option>'
                                  + '</select>';

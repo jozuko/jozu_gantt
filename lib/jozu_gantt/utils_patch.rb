@@ -105,6 +105,10 @@ module JozuGantt::UtilsPatch
         while days != reminder do
           reminder = days
 
+          if checkCorporateWorkingdays(date + days)
+            next
+          end
+
           while non_working_week_days.include?(((cwday + days - 1) % 7) + 1)
             days += 1
             next
@@ -138,6 +142,10 @@ module JozuGantt::UtilsPatch
         while days != reminder do
           reminder = days
 
+          if checkCorporateWorkingdays(date + days)
+            next
+          end
+
           while non_working_week_days.include?(((cwday + days - 1) % 7) + 1)
             days -= 1
             next
@@ -162,29 +170,48 @@ module JozuGantt::UtilsPatch
         date + days
       end
 
-      # 固定休日をチェック
+      # 会社出勤日をチェック
+      def checkCorporateWorkingdays(date)
+        corporate_workingdays = JozuHoliday.find_by_corporate_workingdays()
+        return checkFixedDays(corporate_workingdays, date, false)
+      end
+
+      # 会社休日をチェック
+      def checkCorporateHoliday(date)
+        corporate_holidays = JozuHoliday.find_by_corporate_holidays()
+        return checkFixedDays(corporate_holidays, date, false)
+      end
+
+      # 固定休日に一致する場合、trueを返却
       def checkFixedHoliday(date)
-        @fixed_holidays = JozuHoliday.find_by_fixed()
-        unless @fixed_holidays.present?
+        fixed_holidays = JozuHoliday.find_by_fixed()
+        return checkFixedDays(fixed_holidays, date, true)
+      end
+
+      # 固定日に一致する場合、trueを返却
+      def checkFixedDays(fixed_days, date, transfer)
+        unless fixed_days.present?
           return false
         end
 
-        @fixed_holidays.each do |fixed_holiday|
+        fixed_days.each do |fixed_day|
 
           # まずは年ではじく
-          if date.year < fixed_holiday.year_from || date.year > fixed_holiday.year_to
+          if date.year < fixed_day.year_from || date.year > fixed_day.year_to
             next
           end
 
           # 次に月ではじく
-          if date.month != fixed_holiday.month
+          if date.month != fixed_day.month
             next
           end
 
           # date.yearの祝日を作成 日曜日なら振替休日
-          holiday = Date.new(date.year, fixed_holiday.month, fixed_holiday.day_or_week)
-          if holiday.cwday == 7
-            holiday += 1
+          holiday = Date.new(date.year, fixed_day.month, fixed_day.day_or_week)
+          if transfer
+            if holiday.cwday == 7
+              holiday += 1
+            end
           end
 
           # 一致を返却
@@ -198,12 +225,12 @@ module JozuGantt::UtilsPatch
 
       # ハッピーマンデーをチェック
       def checkHappyHoliday(date)
-        @happy_holidays = JozuHoliday.find_by_happy()
-        unless @happy_holidays.present?
+        happy_holidays = JozuHoliday.find_by_happy()
+        unless happy_holidays.present?
           return false
         end
 
-        @happy_holidays.each do |happy_holiday|
+        happy_holidays.each do |happy_holiday|
           # まずは年ではじく
           if date.year < happy_holiday.year_from || date.year > happy_holiday.year_to
             next
@@ -220,34 +247,6 @@ module JozuGantt::UtilsPatch
           holiday -= (first_day.cwday - 1)
 
           # 一致を返却
-          if date == holiday
-            return true
-          end
-        end
-
-        return false
-      end
-
-      # 会社休日をチェック
-      def checkCorporateHoliday(date)
-        @corporate_holidays = JozuHoliday.find_by_corporate()
-        unless @corporate_holidays.present?
-          return false
-        end
-
-        @corporate_holidays.each do |corporate_holiday|
-          # まずは年ではじく
-          if date.year < corporate_holiday.year_from || date.year > corporate_holiday.year_to
-            next
-          end
-
-          # 次に月ではじく
-          if date.month != corporate_holiday.month
-            next
-          end
-
-          # 一致を返却
-          holiday = Date.new(date.year, corporate_holiday.month, corporate_holiday.day_or_week)
           if date == holiday
             return true
           end

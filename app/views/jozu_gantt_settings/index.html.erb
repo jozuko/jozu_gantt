@@ -5,11 +5,13 @@
 <h2><%= l(:label_gantt_addon_setting) %></h2>
 
 <%= form_tag '/jozu_gantt_settings/edit', :method => :put do %>
-<% 
-  @jozu_corporate_holidays = JozuHoliday.find_by_corporate()
-  @jozu_holidays = JozuHoliday.find_by_holiday()
+<%
+  jozu_corporate_holidays = JozuHoliday.find_by_corporate_holidays()
+  jozu_corporate_wokingdays = JozuHoliday.find_by_corporate_workingdays()
+  jozu_holidays = JozuHoliday.find_by_holiday()
 %>
 
+<!-- corporate_holidays -->
 <fieldset class="box tabular">
 <legend><%= l(:legend_non_working_settings) %></legend>
 <table id="settings_corporate_holidays">
@@ -21,7 +23,7 @@
     <th><%= l(:label_holiday_description) %></th>
     <th><br></th>
   </tr>
-<% @jozu_corporate_holidays.each do |jozu_holiday| %>
+<% jozu_corporate_holidays.each do |jozu_holiday| %>
   <%= fields_for "holidays[]", jozu_holiday do |fh| %>
 
   <tr>
@@ -29,6 +31,7 @@
     <%= fh.hidden_field :id %>
     <%= fh.hidden_field :_destroy %>
     <%= fh.hidden_field :kind %>
+    <%= fh.hidden_field :non_working %>
     <%= fh.select :month, [
           [1, 1],
           [2, 2],
@@ -78,7 +81,7 @@
           [31, 31],
         ] %>
     </td>
-    
+
     <td>
     <%= fh.text_field :year_from, :size => 4 %>
     </td>
@@ -98,9 +101,105 @@
 <% end %>
 </table>
 <a name="corporate_holiday_add">
-<%= link_to_function l(:button_add), 'add_corporate_holiday()', :href => '#corporate_holiday_add', :class => 'icon icon-add' %>
+<%= link_to_function l(:button_add), 'add_corporate_holiday("settings_corporate_holidays", "1")', :href => '#corporate_holiday_add', :class => 'icon icon-add' %>
 </fieldset>
+<%= submit_tag l(:button_save) %><br><br>
 
+<!-- corporate_working_days -->
+<fieldset class="box tabular">
+<legend><%= l(:legend_working_settings) %></legend>
+<table id="settings_corporate_workingdays">
+  <tr>
+    <th><%= l(:label_holiday_month) %></th>
+    <th><%= l(:label_holiday_day_or_week) %></th>
+    <th><%= l(:label_holiday_year_from) %></th>
+    <th><%= l(:label_holiday_year_to) %></th>
+    <th><%= l(:label_holiday_description) %></th>
+    <th><br></th>
+  </tr>
+<% jozu_corporate_wokingdays.each do |jozu_holiday| %>
+  <%= fields_for "holidays[]", jozu_holiday do |fh| %>
+
+  <tr>
+    <td>
+    <%= fh.hidden_field :id %>
+    <%= fh.hidden_field :_destroy %>
+    <%= fh.hidden_field :kind %>
+    <%= fh.hidden_field :non_working %>
+    <%= fh.select :month, [
+          [1, 1],
+          [2, 2],
+          [3, 3],
+          [4, 4],
+          [5, 5],
+          [6, 6],
+          [7, 7],
+          [8, 8],
+          [9, 9],
+          [10, 10],
+          [11, 11],
+          [12, 12],
+        ] %>
+    </td>
+
+    <td>
+    <%= fh.select :day_or_week, [
+          [1, 1],
+          [2, 2],
+          [3, 3],
+          [4, 4],
+          [5, 5],
+          [6, 6],
+          [7, 7],
+          [8, 8],
+          [9, 9],
+          [10, 10],
+          [11, 11],
+          [12, 12],
+          [14, 14],
+          [15, 15],
+          [16, 16],
+          [17, 17],
+          [18, 18],
+          [19, 19],
+          [20, 20],
+          [21, 21],
+          [22, 22],
+          [24, 24],
+          [25, 25],
+          [26, 26],
+          [27, 27],
+          [28, 28],
+          [29, 29],
+          [30, 30],
+          [31, 31],
+        ] %>
+    </td>
+
+    <td>
+    <%= fh.text_field :year_from, :size => 4 %>
+    </td>
+
+    <td>
+    <%= fh.text_field :year_to, :size => 4 %>
+    </td>
+
+    <td>
+    <%= fh.text_field :description %>
+    </td>
+
+    <td><%= link_to_function l(:button_delete), 'delete_holiday(this, "holidays_' + jozu_holiday.id.to_s + '__destroy", "' + l(:confirm_delete) + '")', :class => 'icon icon-del' %></td>
+
+  </tr>
+  <% end %>
+<% end %>
+</table>
+<a name="corporate_holiday_add">
+<%= link_to_function l(:button_add), 'add_corporate_holiday("settings_corporate_workingdays", "0")', :href => '#corporate_holiday_add', :class => 'icon icon-add' %>
+</fieldset>
+<%= submit_tag l(:button_save) %><br><br>
+
+<!-- holidays -->
 <fieldset class="box tabular">
 <legend><%= l(:legend_holiday_settings) %></legend>
 <table id="settings_holidays">
@@ -114,13 +213,14 @@
     <th><br></th>
   </tr>
 
-<% @jozu_holidays.each do |jozu_holiday| %>
+<% jozu_holidays.each do |jozu_holiday| %>
   <%= fields_for "holidays[]", jozu_holiday do |fh| %>
 
   <tr>
     <td>
     <%= fh.hidden_field :id %>
     <%= fh.hidden_field :_destroy %>
+    <%= fh.hidden_field :non_working %>
     <%= fh.select :kind, [
           [l(:label_holiday_kind_fixed), 'fixed'],
           [l(:label_holiday_kind_happy), 'happy']
@@ -177,7 +277,7 @@
           [31, 31],
         ] %>
     </td>
-    
+
     <td>
     <%= fh.text_field :year_from, :size => 4 %>
     </td>

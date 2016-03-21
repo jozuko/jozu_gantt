@@ -11,6 +11,7 @@ ja:
   legend_gantt_settings: "ガントチャートの設定"
   legend_holiday_settings: "祝祭日の設定"
   legend_non_working_settings: "休業日の設定"
+  legend_working_settings: "出勤日の設定"
   description_holiday_settings: "「春分の日」(3/20 or 3/21)と「秋分の日」(9/22 or 9/23)は毎年変わります。祝日ではなく、休業日で設定してください。"
   description_non_working_settings: "「管理」>「設定」>「チケットトラッキング」>「休業日」の設定とは別に、独自の休業日を設定できます。"
 

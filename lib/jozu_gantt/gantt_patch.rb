@@ -144,15 +144,15 @@ module JozuGantt::GanttPatch
       end
 
       def getHolidays(from_date, to_date)
-        @jozu_holidays = []
+        jozu_holidays = []
 
         date = from_date
         while date <= to_date do
-          @jozu_holidays << date if next_working_date(date) != date
+          jozu_holidays << date if next_working_date(date) != date
           date += 1
         end
 
-        return @jozu_holidays
+        return jozu_holidays
       end
 
       # issue content

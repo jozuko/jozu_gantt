@@ -25,6 +25,8 @@ class JozuGanttSettingsController < ApplicationController
 
       # insert or update
       jozu_holiday.kind = jozu_gantt_setting_param[:kind]
+      jozu_holiday.user_id = -1
+      jozu_holiday.non_working = jozu_gantt_setting_param[:non_working]
       jozu_holiday.month = jozu_gantt_setting_param[:month]
       jozu_holiday.day_or_week = jozu_gantt_setting_param[:day_or_week]
       jozu_holiday.year_from = jozu_gantt_setting_param[:year_from]
@@ -42,7 +44,7 @@ class JozuGanttSettingsController < ApplicationController
   # for admin setting
   def jozu_gantt_setting_params
     params
-      .permit(holidays: [:id, :kind, :month, :day_or_week, :year_from, :year_to, :description, :_destroy])[:holidays]
+      .permit(holidays: [:id, :kind, :non_working, :month, :day_or_week, :year_from, :year_to, :description, :_destroy])[:holidays]
   end
 
   # project setting index

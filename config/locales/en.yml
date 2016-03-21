@@ -11,6 +11,7 @@ en:
   legend_gantt_settings: Gantt settings
   legend_holiday_settings: "Holiday settings"
   legend_non_working_settings: "Non-working days settings"
+  legend_working_settings: "Working days settings"
   description_holiday_settings: "so sorry. This setting is japanese only."
   description_non_working_settings: Apart from the setting of the "Administration" > "Settings" > "Issue tracking" > "Non-working days", you can set up your own holiday.
 
